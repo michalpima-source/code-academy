@@ -86,7 +86,7 @@ function CourseGridSkeleton() {
 
 export default function CoursesPage() {
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8" dir="rtl">
+    <div className="px-4 py-6 md:p-6 max-w-6xl mx-auto space-y-8" dir="rtl">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold">כל הקורסים</h1>
         <p className="text-muted-foreground">בחר קורס והתחל ללמוד היום</p>

@@ -80,7 +80,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:p-6 space-y-8">
         {/* Course header */}
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
@@ -96,7 +96,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
             )}
           </div>
 
-          <h1 className="text-3xl font-bold leading-tight">{course.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight">{course.title}</h1>
           {course.description && (
             <p className="text-muted-foreground text-lg leading-relaxed">{course.description}</p>
           )}

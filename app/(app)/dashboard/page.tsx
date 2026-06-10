@@ -45,7 +45,7 @@ export default async function DashboardPage() {
   const earnedBadgeIds = new Set(earnedBadges?.map((b) => b.badge_id) ?? [])
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="px-4 py-6 md:p-6 max-w-5xl mx-auto space-y-8">
       {/* Welcome */}
       <div>
         <h1 className="text-2xl font-bold">שלום, {profile?.display_name ?? "תלמיד"} 👋</h1>

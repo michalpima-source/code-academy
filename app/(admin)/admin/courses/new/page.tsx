@@ -106,7 +106,7 @@ export default function NewCoursePage() {
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6" dir="rtl">
+    <div className="px-4 py-6 md:p-6 max-w-3xl mx-auto space-y-6" dir="rtl">
       <h1 className="text-2xl font-bold">יצירת קורס חדש</h1>
 
       {/* Course details */}

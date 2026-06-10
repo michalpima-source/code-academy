@@ -194,7 +194,7 @@ export default function EditCoursePage() {
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6" dir="rtl">
+    <div className="px-4 py-6 md:p-6 max-w-3xl mx-auto space-y-6" dir="rtl">
       <div className="flex items-center gap-3">
         <Link href="/admin/courses">
           <Button variant="ghost" size="icon" className="h-8 w-8">

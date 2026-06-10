@@ -76,7 +76,7 @@ export default async function AdminDashboardPage() {
   ]
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8" dir="rtl">
+    <div className="px-4 py-6 md:p-6 max-w-6xl mx-auto space-y-8" dir="rtl">
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold">דשבורד מורה</h1>
         <span className="text-sm text-muted-foreground">סקירה כללית</span>
