@@ -19,10 +19,11 @@ No test suite is configured — typecheck is the primary correctness gate.
 
 ### Route Groups
 
-Three route groups control layout and auth guards:
+Four route groups control layout and auth guards:
 
 - `app/(auth)/` — Unauthenticated pages (login, signup). No auth check.
-- `app/(app)/` — Student-facing app. Layout server-checks session; redirects to `/login` if missing.
+- `app/(app)/` — Student-facing app. Layout server-checks session; redirects to `/login` if missing. Renders `<CourseAiPanel />` globally (floating AI button on every page).
+- `app/(app)/learn/` — Nested inside `(app)`. Has its own layout that constrains height for the lesson player's split-pane view.
 - `app/(admin)/admin/` — Admin panel. Layout checks `profile.role === 'admin'`; redirects to `/dashboard` otherwise.
 
 Public homepage is at `app/page.tsx` (outside any group).
@@ -31,10 +32,11 @@ Public homepage is at `app/page.tsx` (outside any group).
 
 - **`lib/supabase/server.ts`** exports two clients:
   - `createClient()` — uses the publishable key, respects RLS. Use this everywhere.
-  - `createAdminClient()` — uses `SUPABASE_SECRET_KEY`, bypasses RLS. Only for privileged server operations.
+  - `createAdminClient()` — uses `SUPABASE_SECRET_KEY`, bypasses RLS. Required for any server operation that writes on behalf of another user (e.g. admin enrollment API routes).
 - **`proxy.ts`** (not `middleware.ts`) handles session refresh — this is Next.js 16's convention. Never create a `middleware.ts`; it conflicts with `proxy.ts`.
 - Role system: `profiles.role` is `'student'` or `'admin'`. The DB has an `is_admin()` SQL helper used by RLS policies.
 - To make a user admin: `UPDATE profiles SET role = 'admin' WHERE id = '<user-id>';`
+- Admin API routes (`app/api/admin/`) must use `createAdminClient` for writes — RLS blocks cross-user inserts even for admins.
 
 ### AI Chat (`@ai-sdk/react` v3)
 
@@ -56,15 +58,25 @@ sendMessage({ role: "user", parts: [{ type: "text", text: input }] })
 msg.parts.map(p => p.type === "text" ? p.text : "")
 ```
 
-The API route (`app/api/chat/route.ts`) uses `streamText` from the `ai` package with model `"anthropic/claude-sonnet-4-6"` via Vercel AI Gateway. The `AI_GATEWAY_API_KEY` env var is required.
+The API route (`app/api/chat/route.ts`) uses `streamText` from the `ai` package with `anthropic("claude-sonnet-4-5")` from `@ai-sdk/anthropic`. The `ANTHROPIC_API_KEY` env var is required. When a `lessonId` is provided the route fetches the lesson's `transcript` column and includes the first 4000 chars in the system prompt.
 
 ### Styling
 
 - **Tailwind v4** — uses `oklch()` color space. Never use `hsl()` or `hsl(var(...))`.
 - CSS custom properties are accessed as `var(--color-border)`, not `hsl(var(--border))`.
-- Primary color: `oklch(0.55 0.22 264)` (blue/indigo). Dark mode bg: `oklch(0.13 0.02 264)`.
+- Primary color: `oklch(0.55 0.22 264)` (blue/indigo). Dark mode bg: `oklch(0.13 0.02 264)`. Default theme is **dark**.
 - All UI is **RTL/Hebrew**: use `dir="rtl"` on layout containers, `start`/`end` instead of `left`/`right` in Tailwind classes (`ps-`, `pe-`, `ms-`, `me-`).
 - 54 shadcn/ui components are pre-installed in `components/ui/`. Check there before installing new UI packages.
+- `html, body` background is `transparent` — the animated `<StarBackground />` (fixed, `z-index: -10`) renders behind all content via `app/layout.tsx`. Cards use semi-transparent `--card` with `backdrop-blur-xl` for glass effect.
+- `components/ui/sparkles.tsx` is a custom canvas-based particle animation — it does NOT use `@tsparticles` APIs despite the packages being installed. Do not import `initParticlesEngine` from any tsparticles package (v4 removed it).
+
+### Background & Theming
+
+`components/star-background.tsx` renders differently per theme:
+- **Dark**: deep navy base + nebula blobs + `SparklesCore` canvas particles
+- **Light**: warm off-white gradient + indigo dot grid + soft color blobs
+
+`components/theme-toggle.tsx` toggles between modes. `defaultTheme="dark"` with `enableSystem={false}` in `ThemeProvider`.
 
 ### YouTube Integration
 
@@ -72,9 +84,13 @@ The API route (`app/api/chat/route.ts`) uses `streamText` from the `ai` package 
 - Single video: YouTube oEmbed — `https://www.youtube.com/oembed?url=...&format=json`
 - Playlist: YouTube RSS — `https://www.youtube.com/feeds/videos.xml?playlist_id={id}`
 
+`app/api/youtube/transcript/route.ts` uses the `youtube-transcript` npm package. Called from the admin course editor to populate `lessons.transcript`. Tries Hebrew captions first, then English, then default.
+
 ### Database Tables
 
-`profiles`, `courses`, `lessons`, `enrollments`, `lesson_progress`, `chat_messages`, `badges`, `student_badges`. All have RLS enabled. Supabase project ID: `znsxcxixvjcpdmhbklqi`.
+`profiles`, `courses`, `lessons`, `enrollments`, `lesson_progress`, `lesson_notes`, `chat_messages`, `badges`, `student_badges`. All have RLS enabled. Supabase project ID: `znsxcxixvjcpdmhbklqi`.
+
+`lessons` has two extra columns added by migration: `transcript TEXT` and `transcript_fetched_at TIMESTAMPTZ`.
 
 ### Key Env Vars
 
@@ -83,4 +99,4 @@ The API route (`app/api/chat/route.ts`) uses `streamText` from the `ai` package 
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Browser-safe key (respects RLS) |
 | `SUPABASE_SECRET_KEY` | Server-only key (bypasses RLS) |
-| `AI_GATEWAY_API_KEY` | Vercel AI Gateway for Claude |
+| `ANTHROPIC_API_KEY` | Direct Anthropic API for AI chat |

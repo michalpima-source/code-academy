@@ -21,7 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         userName={profile?.display_name ?? user.email ?? ""}
         isAdmin={profile?.role === "admin"}
       />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
         {children}
       </main>
       <CourseAiPanel />
