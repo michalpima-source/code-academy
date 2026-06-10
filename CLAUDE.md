@@ -60,6 +60,15 @@ msg.parts.map(p => p.type === "text" ? p.text : "")
 
 The API route (`app/api/chat/route.ts`) uses `streamText` from the `ai` package with `anthropic("claude-sonnet-4-5")` from `@ai-sdk/anthropic`. The `ANTHROPIC_API_KEY` env var is required. When a `lessonId` is provided the route fetches the lesson's `transcript` column and includes the first 4000 chars in the system prompt.
 
+### Mobile Responsiveness
+
+- **Breakpoint**: `md` (768px) is the desktop/mobile boundary throughout the app.
+- **App sidebar** (`components/app-sidebar.tsx`): `hidden md:flex` on desktop; on mobile renders a fixed top bar (h-14) with a hamburger that opens a `Sheet` drawer. `<main>` has `pt-14 md:pt-0` to clear the fixed bar.
+- **Admin sidebar** (`components/admin/admin-mobile-nav.tsx`): same pattern — fixed top bar + Sheet on mobile, `hidden md:flex` aside on desktop.
+- **Lesson player** (`components/lesson-player.tsx`): lesson list sidebar is `hidden md:flex`; on mobile a "שיעורים" tab in the tab bar opens a Sheet drawer with the lesson list.
+- **Page padding**: all page wrappers use `px-4 py-6 md:p-6` — never fixed `p-6` alone.
+- **`Sheet` component** is built on `@base-ui/react/dialog`, not Radix UI. It does **not** support `asChild` on `SheetTrigger` — style the trigger directly with `className`.
+
 ### Styling
 
 - **Tailwind v4** — uses `oklch()` color space. Never use `hsl()` or `hsl(var(...))`.
