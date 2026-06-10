@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { EnrollButton } from "@/components/enroll-button"
-import { CourseAiPanel } from "@/components/course-ai-panel"
 import { Play, Clock, CheckCircle2, BookOpen, Lock } from "lucide-react"
 
 const levelLabels = { beginner: "מתחיל", intermediate: "בינוני", advanced: "מתקדם" }
@@ -56,7 +55,6 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
 
   return (
     <div className="min-h-full" dir="rtl">
-      {isEnrolled && <CourseAiPanel courseId={id} courseTitle={course.title} />}
       {/* Video preview hero */}
       {previewLesson && (
         <div className="relative bg-black">

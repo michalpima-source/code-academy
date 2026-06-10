@@ -7,11 +7,11 @@ import { Sparkles, X, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface CourseAiPanelProps {
-  courseId: string
-  courseTitle: string
+  courseId?: string
+  courseTitle?: string
 }
 
-export function CourseAiPanel({ courseId, courseTitle }: CourseAiPanelProps) {
+export function CourseAiPanel({ courseId, courseTitle }: CourseAiPanelProps = {}) {
   const [open, setOpen] = useState(false)
 
   return (
