@@ -1,10 +1,17 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
-
+import { Geist_Mono } from "next/font/google"
+import { Noto_Sans_Hebrew } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/ui/sonner"
+import { StarBackground } from "@/components/star-background"
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const notoHebrew = Noto_Sans_Hebrew({
+  subsets: ["hebrew", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-sans",
+  display: "swap",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -18,12 +25,17 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="he"
+      dir="rtl"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
+      className={cn("antialiased", notoHebrew.variable, fontMono.variable)}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="font-sans">
+        <ThemeProvider>
+          <StarBackground />
+          {children}
+          <Toaster position="top-center" richColors />
+        </ThemeProvider>
       </body>
     </html>
   )
